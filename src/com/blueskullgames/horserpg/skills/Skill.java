@@ -1,13 +1,11 @@
 package com.blueskullgames.horserpg.skills;
 
+import com.blueskullgames.horserpg.HorseRPG;
+import com.blueskullgames.horserpg.RPGHorse;
+import me.zombie_striker.pluginconstructor.HotbarMessager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import com.blueskullgames.horserpg.HorseRPG;
-import com.blueskullgames.horserpg.RPGHorse;
-
-import me.zombie_striker.pluginconstructor.HotbarMessager;
 
 public abstract class Skill {
 	
@@ -36,7 +34,6 @@ public abstract class Skill {
 	/** Constructs a skill object
 	 * @param h is the horse
 	 * @param name is the skill name
-	 * @param cooldown is the ability cooldown (in seconds)
 	 * @param xp is the current amount of xp
 	 */
 	public Skill(RPGHorse h, String name, int xp) {
@@ -50,7 +47,6 @@ public abstract class Skill {
 	/** Adds xp to the skill with player specified
 	 * @param newXP is the xp to add
 	 * @param p is the horse owner
-	 * @return true if leveled up
 	 */
 	public void addXP(int newXP, Player p) {
 		xp += newXP;
@@ -64,7 +60,7 @@ public abstract class Skill {
 				HorseRPG.msg(p, inc);
 				try {
 					HotbarMessager.sendHotBarMessage(p, ChatColor.translateAlternateColorCodes('&', inc));
-				}catch(Error|Exception e) {
+				}catch(Error|Exception ignored) {
 					
 				}
 			}

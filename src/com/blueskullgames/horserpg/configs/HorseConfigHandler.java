@@ -1,11 +1,7 @@
 package com.blueskullgames.horserpg.configs;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
+import com.blueskullgames.horserpg.HorseRPG;
+import com.blueskullgames.horserpg.RPGHorse;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -14,14 +10,17 @@ import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
-import org.bukkit.entity.Horse.*;
-import org.bukkit.inventory.HorseInventory;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.entity.Horse.Color;
+import org.bukkit.entity.Horse.Style;
+import org.bukkit.entity.Horse.Variant;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.blueskullgames.horserpg.HorseRPG;
-import com.blueskullgames.horserpg.RPGHorse;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @SuppressWarnings("deprecation")
 public class HorseConfigHandler {
@@ -35,32 +34,18 @@ public class HorseConfigHandler {
 			try {
 				file.createNewFile();
 			} catch (IOException e) {
-				e.printStackTrace();
+				Bukkit.getLogger().severe(e.getMessage());
 			}
 		}
 		this.config = YamlConfiguration.loadConfiguration(file);
 	}
-
-	/*
-	 * public void setGlobalVar(String path, Object var) { config.set("Global" +
-	 * path, var); try { config.save(file); } catch (IOException e) {
-	 * e.printStackTrace(); }
-	 * 
-	 * }
-	 * 
-	 * public boolean containsGlobalVariable(String path) { return
-	 * config.contains("Global" + path); }
-	 * 
-	 * public Object getGlobalVariable(String path) { return config.get("Global" +
-	 * path); }
-	 */
 
 	public void setVariable(RPGHorse horse, String path, Object var) {
 		config.set("Horses." + horse.owners_name + "." + horse.rpgUUID.toString() + path, var);
 		try {
 			config.save(file);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Bukkit.getLogger().severe(e.getMessage());
 		}
 	}
 
@@ -128,14 +113,14 @@ public class HorseConfigHandler {
 			}
 			try {
 				config.set("Horses." + horse.owners_name + "." + horse.rpgUUID.toString() + Keys.inventory,
-						((HorseInventory) ((AbstractHorse) horse.getHorse()).getInventory()).getContents());
+						((AbstractHorse) horse.getHorse()).getInventory().getContents());
 			} catch (Exception | Error e) {
 				try {
 					config.set("Horses." + horse.owners_name + "." + horse.rpgUUID.toString() + Keys.inventory,
-							((HorseInventory) ((Horse) horse.getHorse()).getInventory()).getContents());
+							((Horse) horse.getHorse()).getInventory().getContents());
 				} catch (Exception | Error e2) {
 					config.set("Horses." + horse.owners_name + "." + horse.rpgUUID.toString() + Keys.inventory,
-							((Inventory) ((AbstractHorse) horse.getHorse()).getInventory()).getContents());
+							((AbstractHorse) horse.getHorse()).getInventory().getContents());
 				}
 			}
 
@@ -152,7 +137,7 @@ public class HorseConfigHandler {
 		try {
 			config.save(file);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Bukkit.getLogger().severe(e.getMessage());
 		}
 	}
 
@@ -205,9 +190,7 @@ public class HorseConfigHandler {
 
 					final RPGHorse rpgHorse = new RPGHorse(horsename, owner, c, s, v, gm, sswift, sagil, svit, swrath,
 							uuid, jumpPow, sprintPow, sex);
-					if (config.contains("Horses." + owner + "." + rpguuids + Keys.SPAWNED)) {
-				//		rpgHorse.spawned = config.getBoolean("Horses." + owner + "." + rpguuids + Keys.SPAWNED);
-					}
+
 					if (config.contains("Horses." + owner + "." + rpguuids + Keys.isBaby)) {
 						rpgHorse.isBaby = true;
 					}
@@ -219,27 +202,27 @@ public class HorseConfigHandler {
 						rpgHorse.setHasChest(config.getBoolean("Horses." + owner + "." + rpguuids + Keys.hasChest));
 					}
 					if (config.contains("Horses." + owner + "." + rpguuids + Keys.health)) {
-						rpgHorse.generic_health=(config.getDouble("Horses." + owner + "." + rpguuids + Keys.health));
+						rpgHorse.generic_health = (config.getDouble("Horses." + owner + "." + rpguuids + Keys.health));
 					}
 
-					if (config.contains("Horses." + owner + "." + rpguuids + Keys.inventory.toString())) {
-						ItemStack[] dymbtemp2 = null;
+					if (config.contains("Horses." + owner + "." + rpguuids + Keys.inventory)) {
+						ItemStack[] dymbtemp2;
 						try {
-							Object[] dumptemp = null;
+							Object[] dumptemp;
 							dumptemp = ((List<ItemStack>) config
-									.get("Horses." + owner + "." + rpguuids + Keys.inventory.toString())).toArray();
+									.get("Horses." + owner + "." + rpguuids + Keys.inventory)).toArray();
 							dymbtemp2 = new ItemStack[dumptemp.length];
 							for (int i = 0; i < dumptemp.length; i++) {
 								dymbtemp2[i] = (ItemStack) dumptemp[i];
 							}
 						} catch (Error | Exception e5) {
 							dymbtemp2 = ((ItemStack[]) config
-									.get("Horses." + owner + "." + rpguuids + Keys.inventory.toString()));
+									.get("Horses." + owner + "." + rpguuids + Keys.inventory));
 						}
 						rpgHorse.inventory = dymbtemp2;
 					}
 					rpgHorse.hasSaddle = config.getBoolean("Horses." + owner + "." + rpguuids + Keys.hassaddle);
-					if (config.contains("Horses." + owner + "." + rpguuids + Keys.entityslastUUID.toString())) {
+					if (config.contains("Horses." + owner + "." + rpguuids + Keys.entityslastUUID)) {
 						final UUID uuid2 = UUID.fromString(
 								config.getString("Horses." + owner + "." + rpguuids + Keys.entityslastUUID));
 						final String sss = config.getString("Horses." + owner + "." + rpguuids + Keys.entityslastWorld);
@@ -274,10 +257,10 @@ public class HorseConfigHandler {
 							}
 						}.runTaskTimer(HorseRPG.instance, 2, 5 * 20);
 					}
-					//HorseRPG.instance.getLogger().info("Loading " + rpgHorse.name);
+
 					return rpgHorse;
 				}
-			} catch (Error | Exception e45) {
+			} catch (Error | Exception ignored) {
 			}
 		}
 		HorseRPG.instance.getLogger().warning("Could not load horse " + horseUUID);
@@ -287,13 +270,13 @@ public class HorseConfigHandler {
 	public enum Keys {
 		entityslastUUID(".lastUUIDinstance"), entityslastWorld(".lastWorldname"), name(".name"), godmode(
 				".godmode"), inventory(".inventory"), hassaddle(".hassaddle"), wrath(".wrath"), agility(
-						".agility"), swiftness(".swiftness"), vitality(".vitality"), color(".color"), isdead(
-								".isdead"), powerlevel(".powerlevel"), style(".style"), variant(".variant"), jump(
-										".defaultJump"), sprint(".defaultSpeed"), health(".defaultHealth"), sex(".sex"), hasChest(
-												".hasChest"), isBaby(".isBaby"), AGE(".age"), SPAWNED(".spawned");
-		private String n;
+				".agility"), swiftness(".swiftness"), vitality(".vitality"), color(".color"), isdead(
+				".isdead"), powerlevel(".powerlevel"), style(".style"), variant(".variant"), jump(
+				".defaultJump"), sprint(".defaultSpeed"), health(".defaultHealth"), sex(".sex"), hasChest(
+				".hasChest"), isBaby(".isBaby"), AGE(".age"), SPAWNED(".spawned");
+		private final String n;
 
-		private Keys(String name) {
+		Keys(String name) {
 			n = name;
 		}
 

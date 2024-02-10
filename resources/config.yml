@@ -38,8 +38,8 @@ infuriate-cooldown: 20
 # I recommend using -1 for each group if using economy.
 # The horse cost multiplier makes owning tons of horses exponentially expensive
 groups:
-    default: 10 # Given to everyone by default
-    admin: -1 # Given to ops by default
+  default: 10 # Given to everyone by default
+  admin: -1 # Given to ops by default
 #    nooblets: 5 # Requires node: mcmmohorses.groups.nooblets
 #    moderators: -1 # Requires node: mcmmohorses.groups.moderators
 #    vip: 20 # Requires node: mcmmohorses.groups.vip
@@ -62,9 +62,6 @@ summon-cost: 10
 
 # Horse banish cost
 banish-cost: 0
-
-# Allow for automatic updates
-auto-update: true
 
 # Stop the player from banishing horses. 
 disable_banishment: false
@@ -91,7 +88,7 @@ priceForHorse:
   UNDEAD_HORSE: 400.0
   SKELETON_HORSE: 400.0
   LLAMA: 100.0
-  
+
 # Requires the horse to be claimed when they are tamed, or else the player is ejected from the horse
 Force_claim_on_tame: false
 

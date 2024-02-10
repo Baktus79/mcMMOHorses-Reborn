@@ -12,60 +12,60 @@ import org.bukkit.scheduler.BukkitTask;
 import com.blueskullgames.horserpg.HorseRPG;
 
 public class MessagesConfigHandler {
-	
+
 	private File file;
 	private FileConfiguration config;
-	
+
 	private BukkitTask saveTask;
-	
+
 	public MessagesConfigHandler(File mess) {
 		this.file = mess;
-		if(!this.file.exists())
+		if (!this.file.exists())
 			try {
 				file.createNewFile();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				
 			}
 		config = YamlConfiguration.loadConfiguration(file);
 	}
 
 	public String a(String path, String a) {
-		if(config.contains(path)) {
+		if (config.contains(path)) {
 			return config.getString(path);
 		}
 		config.set(path, a);
-		if(saveTask==null) {
+		if (saveTask == null) {
 			saveTask = new BukkitRunnable() {
-				
+
 				@Override
 				public void run() {
 					save();
-					saveTask = null;					
+					saveTask = null;
 				}
 			}.runTaskLater(HorseRPG.instance, 1);
 		}
 		return a;
 	}
-	
-	public String[] b(String path, String[] a){
-		if(config.contains(path)) {
+
+	public String[] b(String path, String[] a) {
+		if (config.contains(path)) {
 			List<String> k = config.getStringList(path);
 			return k.toArray(new String[k.size()]);
 		}
 		config.set(path, a);
-		if(saveTask==null) {
+		if (saveTask == null) {
 			saveTask = new BukkitRunnable() {
-				
+
 				@Override
 				public void run() {
 					save();
-					saveTask = null;					
+					saveTask = null;
 				}
 			}.runTaskLater(HorseRPG.instance, 1);
 		}
-		return a;		
+		return a;
 	}
+
 	public void save() {
 		try {
 			config.save(file);

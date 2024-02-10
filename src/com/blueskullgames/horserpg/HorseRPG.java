@@ -38,6 +38,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.Map.Entry;
 
+@SuppressWarnings({"deprecation", "NullableProblems"})
 public class HorseRPG extends JavaPlugin {
 
 	public static final String H_HELP = "mcmmohorses.help";
@@ -129,7 +130,7 @@ public class HorseRPG extends JavaPlugin {
 	public static String SADDLE_SUMMON = "&bSummon %name%";
 
 
-	public static String sb_STATS = "\'s Stats";
+	public static String sb_STATS = "'s Stats";
 	public static String sb_Swiftness = "Swiftness:";
 	public static String sb_Sprint = "Sprint:";
 	public static String sb_Agility = "Agility:";
@@ -243,23 +244,16 @@ public class HorseRPG extends JavaPlugin {
 	}
 
 	public static boolean hasHorses(Player p) {
-		if (ownedHorses.containsKey(p.getName()) && ownedHorses.get(p.getName()).size() > 0) {
-			return true;
-		}
-		return false;
+		return ownedHorses.containsKey(p.getName()) && !ownedHorses.get(p.getName()).isEmpty();
 	}
 
 	/**
 	 * Returns the sender's horse THAT IS NOT CURRENTLY SPAWNED
 	 *
-	 * @param p
-	 * @param args
-	 * @param offset
-	 * @return
 	 */
 	public static RPGHorse getHorseNotSpawned(Player p, String[] args, int offset) {
 		if (args.length <= offset) {
-			if (ownedHorses.containsKey(p.getName()) && ownedHorses.get(p.getName()).size() > 0) {
+			if (ownedHorses.containsKey(p.getName()) && !ownedHorses.get(p.getName()).isEmpty()) {
 				for (RPGHorse h : ownedHorses.get(p.getName())) {
 					if (!isRPGHorse(h.getHorse())) {
 						return h;
@@ -269,31 +263,27 @@ public class HorseRPG extends JavaPlugin {
 			return null;
 		}
 
-		String hName = args[offset];
+		StringBuilder hName = new StringBuilder(args[offset]);
 		for (int i = offset + 1; i < args.length; i++)
-			hName += " " + args[i];
-		hName = hName.replaceAll("_", " ");
+			hName.append(" ").append(args[i]);
+		hName = new StringBuilder(hName.toString().replaceAll("_", " "));
 
 		if (ownedHorses.containsKey(p.getName()))
 			for (RPGHorse h : ownedHorses.get(p.getName()))
-				if (h.name.equalsIgnoreCase(hName))
+				if (h.name.equalsIgnoreCase(hName.toString()))
 					return h;
 
-		msg(p, HORSE_DOES_NOT_EXIST.replace("%name%", hName));
+		msg(p, HORSE_DOES_NOT_EXIST.replace("%name%", hName.toString()));
 		return null;
 	}
 
 	/**
 	 * Returns the sender's horse THAT IS SPAWNED
 	 *
-	 * @param p
-	 * @param args
-	 * @param offset
-	 * @return
 	 */
 	public static RPGHorse getHorseSpawned(Player p, String[] args, int offset) {
 		if (args.length <= offset) {
-			if (ownedHorses.containsKey(p.getName()) && ownedHorses.get(p.getName()).size() > 0) {
+			if (ownedHorses.containsKey(p.getName()) && !ownedHorses.get(p.getName()).isEmpty()) {
 				for (RPGHorse h : ownedHorses.get(p.getName())) {
 					if (isRPGHorse(h.getHorse())) {
 						return h;
@@ -303,17 +293,17 @@ public class HorseRPG extends JavaPlugin {
 			return null;
 		}
 
-		String hName = args[offset];
+		StringBuilder hName = new StringBuilder(args[offset]);
 		for (int i = offset + 1; i < args.length; i++)
-			hName += " " + args[i];
-		hName = hName.replaceAll("_", " ");
+			hName.append(" ").append(args[i]);
+		hName = new StringBuilder(hName.toString().replaceAll("_", " "));
 
 		if (ownedHorses.containsKey(p.getName()))
 			for (RPGHorse h : ownedHorses.get(p.getName()))
 				if (isRPGHorse(h.getHorse()))
-					if (h.name.equalsIgnoreCase(hName))
+					if (h.name.equalsIgnoreCase(hName.toString()))
 						return h;
-		msg(p, HORSE_DOES_NOT_EXIST.replace("%name%", hName));
+		msg(p, HORSE_DOES_NOT_EXIST.replace("%name%", hName.toString()));
 		return null;
 	}
 
@@ -328,22 +318,22 @@ public class HorseRPG extends JavaPlugin {
 		if (args.length <= offset) {
 			if (pCurrentHorse.containsKey(p.getUniqueId())) {
 				return pCurrentHorse.get(p.getUniqueId());
-			} else if (ownedHorses.containsKey(p.getName()) && ownedHorses.get(p.getName()).size() > 0)
+			} else if (ownedHorses.containsKey(p.getName()) && !ownedHorses.get(p.getName()).isEmpty())
 				return ownedHorses.get(p.getName()).first();
 
 			return null;
 		}
 
-		String hName = args[offset];
+		StringBuilder hName = new StringBuilder(args[offset]);
 		for (int i = offset + 1; i < args.length; i++)
-			hName += " " + args[i];
-		hName = hName.replaceAll("_", " ");
+			hName.append(" ").append(args[i]);
+		hName = new StringBuilder(hName.toString().replaceAll("_", " "));
 		if (ownedHorses.containsKey(p.getName()))
 			for (RPGHorse h : ownedHorses.get(p.getName()))
-				if (h.name.equalsIgnoreCase(hName))
+				if (h.name.equalsIgnoreCase(hName.toString()))
 					return h;
 
-		msg(p, HORSE_DOES_NOT_EXIST.replace("%name%", hName));
+		msg(p, HORSE_DOES_NOT_EXIST.replace("%name%", hName.toString()));
 		return null;
 	}
 
@@ -383,7 +373,7 @@ public class HorseRPG extends JavaPlugin {
 				return;
 			}
 		}
-		ArrayList<String> customHelp = new ArrayList<String>();
+		ArrayList<String> customHelp = new ArrayList<>();
 		for (Entry<String, String> entry : help.entrySet())
 			if (sender.hasPermission(entry.getKey()))
 				customHelp.add(entry.getValue());
@@ -416,7 +406,7 @@ public class HorseRPG extends JavaPlugin {
 		Player p = (Player) sender;
 
 		TreeSet<RPGHorse> myHorses = ownedHorses.get(p.getName());
-		if (myHorses == null || myHorses.size() <= 0) {
+		if (myHorses == null || myHorses.isEmpty()) {
 			msg(sender, NO_HORSES);
 			return;
 		}
@@ -495,8 +485,8 @@ public class HorseRPG extends JavaPlugin {
 		if (!DisableshowStatsInChat) {
 			p.sendMessage(ChatColor.YELLOW + "\"" + h.name + "\"" + sb_STATS);
 			p.sendMessage((ChatColor.GREEN + sb_Swiftness) + ChatColor.WHITE + "  " + h.swiftness.level);
-			p.sendMessage((ChatColor.DARK_GRAY + sb_Swiftness) + ChatColor.GRAY + "= " + ((int) (h.swiftness.amplitude))
-					+ (ChatColor.DARK_GRAY + "Time: ") + ChatColor.GRAY + "= " + ((int) (h.swiftness.duration / 20))
+			p.sendMessage((ChatColor.DARK_GRAY + sb_Swiftness) + ChatColor.GRAY + "= " + h.swiftness.amplitude
+					+ (ChatColor.DARK_GRAY + "Time: ") + ChatColor.GRAY + "= " + (h.swiftness.duration / 20)
 					+ "s");
 			p.sendMessage((ChatColor.GREEN + sb_Agility + ChatColor.WHITE + "  " + h.agility.level));
 			p.sendMessage((ChatColor.DARK_GRAY + sb_Dodge) + ChatColor.GRAY + "= "
@@ -505,7 +495,7 @@ public class HorseRPG extends JavaPlugin {
 			p.sendMessage((ChatColor.GREEN + sb_Vitality) + ChatColor.WHITE + "  " + h.vitality.level);
 			// TODO: Check if correct: 44 (22 hears) is the base health for all horses
 			p.sendMessage((ChatColor.DARK_GRAY + sb_Vitality) + ChatColor.GRAY + "= " + ((44 - h.vitality.healthBonus)) / 2
-					+ (ChatColor.DARK_GRAY + sb_Bonus) + ChatColor.GRAY + "= " + ((int) (h.vitality.healthBonus / 2)));
+					+ (ChatColor.DARK_GRAY + sb_Bonus) + ChatColor.GRAY + "= " + (h.vitality.healthBonus / 2));
 			p.sendMessage((ChatColor.GREEN + sb_Wrath) + ChatColor.WHITE + "  " + h.wrath.level);
 			p.sendMessage((ChatColor.DARK_GRAY + sb_Infuriate) + ChatColor.GRAY + "= "
 					+ ((int) (h.wrath.infuriateChance * 100)) + "%");
@@ -526,8 +516,8 @@ public class HorseRPG extends JavaPlugin {
 			try {
 				obj.getScore((ChatColor.GREEN + sb_Swiftness) + ChatColor.WHITE + "  " + h.swiftness.level).setScore(8);
 				obj.getScore((ChatColor.DARK_GRAY + sb_Sprint) + ChatColor.GRAY + "= "
-						+ ((int) (h.swiftness.amplitude)) + (ChatColor.DARK_GRAY + "Time: ") + ChatColor.GRAY + "= "
-						+ ((int) (h.swiftness.duration / 20)) + "s").setScore(7);
+						+ h.swiftness.amplitude + (ChatColor.DARK_GRAY + "Time: ") + ChatColor.GRAY + "= "
+						+ (h.swiftness.duration / 20) + "s").setScore(7);
 				obj.getScore((ChatColor.GREEN + sb_Agility) + ChatColor.WHITE + "  " + h.agility.level).setScore(6);
 				obj.getScore((ChatColor.DARK_GRAY + sb_Dodge) + ChatColor.GRAY + "= "
 						+ ((int) (h.agility.dodgeChance * 100)) + "%" + (ChatColor.DARK_GRAY + sb_Roll) + ChatColor.GRAY
@@ -536,7 +526,7 @@ public class HorseRPG extends JavaPlugin {
 				// TODO: Check if correct: 44 (22 hears) is the base health for all horses
 				obj.getScore((ChatColor.DARK_GRAY + sb_Base) + ChatColor.GRAY + "= "
 						+ ((44 - h.vitality.healthBonus)) / 2 + (ChatColor.DARK_GRAY + sb_Bonus) + ChatColor.GRAY
-						+ "= " + ((int) (h.vitality.healthBonus / 2))).setScore(3);
+						+ "= " + (h.vitality.healthBonus / 2)).setScore(3);
 				obj.getScore((ChatColor.GREEN + sb_Wrath) + ChatColor.WHITE + "  " + h.wrath.level).setScore(2);
 				obj.getScore((ChatColor.DARK_GRAY + sb_Infuriate) + ChatColor.GRAY + "= "
 						+ ((int) (h.wrath.infuriateChance * 100)) + "%").setScore(1);
@@ -555,8 +545,8 @@ public class HorseRPG extends JavaPlugin {
 				obj.getScore(Bukkit.getOfflinePlayer(ChatColor.GOLD + sb_PowerLevel)).setScore(h.powerLevel);
 
 				obj.getScore(Bukkit.getOfflinePlayer((ChatColor.DARK_GRAY + sb_Sprint) + ChatColor.GRAY + "= "
-						+ ((int) (h.swiftness.amplitude)) + (ChatColor.DARK_GRAY + "Time: ") + ChatColor.GRAY + "= "
-						+ ((int) (h.swiftness.duration / 20)) + "s")).setScore(7);
+						+ h.swiftness.amplitude + (ChatColor.DARK_GRAY + "Time: ") + ChatColor.GRAY + "= "
+						+ (h.swiftness.duration / 20) + "s")).setScore(7);
 
 				obj.getScore(Bukkit.getOfflinePlayer((ChatColor.DARK_GRAY + sb_Dodge) + ChatColor.GRAY + "= "
 						+ ((int) (h.agility.dodgeChance * 100)) + "%" + (ChatColor.DARK_GRAY + sb_Roll) + ChatColor.GRAY
@@ -564,7 +554,7 @@ public class HorseRPG extends JavaPlugin {
 				// TODO: Check if correct: 44 (22 hears) is the base health for all horses
 				obj.getScore(Bukkit.getOfflinePlayer((ChatColor.DARK_GRAY + sb_Base) + ChatColor.GRAY + "= "
 						+ (((44 - h.vitality.healthBonus) / 2)) + ChatColor.DARK_GRAY + sb_Bonus + ChatColor.GRAY
-						+ "= " + ((int) (h.vitality.healthBonus / 2)))).setScore(3);
+						+ "= " + (h.vitality.healthBonus / 2))).setScore(3);
 
 				obj.getScore(Bukkit.getOfflinePlayer((ChatColor.DARK_GRAY + sb_Infuriate) + ChatColor.GRAY + "= "
 						+ ((int) (h.wrath.infuriateChance * 100)) + "%")).setScore(1);
@@ -632,7 +622,7 @@ public class HorseRPG extends JavaPlugin {
 		 * if (pCurrentHorse.containsKey(p)) { msg(p, BANISH_HORSE); return; }
 		 */
 
-		boolean aHorse = false;
+		boolean aHorse;
 		try {
 			aHorse = p.getVehicle() instanceof org.bukkit.entity.AbstractHorse;
 		} catch (Error | Exception e) {
@@ -670,7 +660,8 @@ public class HorseRPG extends JavaPlugin {
 			}
 			return;
 		}
-		boolean kl = false;
+		boolean kl;
+		
 		try {
 			kl = !((Tameable) horse).isTamed() || ((Horse) horse).getInventory().getSaddle() == null;
 		} catch (Error | Exception e) {
@@ -698,7 +689,7 @@ public class HorseRPG extends JavaPlugin {
 			}
 			if (r.transactionSuccess()) {
 				try {
-					msg(p, PURCHASED_FOR_CLAIM.replace("%amount%", "" + econ.format(currentCost)));
+					msg(p, PURCHASED_FOR_CLAIM.replace("%amount%", econ.format(currentCost)));
 				} catch (Exception e4) {
 					msg(p, PURCHASED_FOR_CLAIM.replace("%amount%", "[ERROR]"));
 				}
@@ -716,18 +707,8 @@ public class HorseRPG extends JavaPlugin {
 			h = new RPGHorse(p, (Horse) horse);
 			h.setVariant(((Horse) horse).getVariant());
 		} catch (Error | Exception e) {
-			h = new RPGHorse(p, (org.bukkit.entity.AbstractHorse) horse);
+			h = new RPGHorse(p, horse);
 			h.setVariant(((org.bukkit.entity.AbstractHorse) horse).getVariant());
-		}
-
-		try {
-			if (h instanceof Donkey) {
-				((Donkey) h).isCarryingChest();
-			}
-			if (h instanceof Mule) {
-				((Mule) h).isCarryingChest();
-			}
-		} catch (Error | Exception e) {
 		}
 
 		h.setHorse(horse);
@@ -736,7 +717,7 @@ public class HorseRPG extends JavaPlugin {
 		pCurrentHorse.put(p.getUniqueId(), h);
 		addSpawnedHorse(horse, h);
 		if (!ownedHorses.containsKey(p.getName()))
-			ownedHorses.put(p.getName(), new TreeSet<RPGHorse>());
+			ownedHorses.put(p.getName(), new TreeSet<>());
 		ownedHorses.get(p.getName()).add(h);
 		horses.add(h);
 
@@ -825,7 +806,7 @@ public class HorseRPG extends JavaPlugin {
 			return;
 		}
 
-		double cost = 0;
+		double cost;
 		try {
 			cost = Double.parseDouble(args[1]);
 		} catch (Exception ex) {
@@ -838,13 +819,13 @@ public class HorseRPG extends JavaPlugin {
 			return;
 		}
 
-		String buyerName = args[2];
+		StringBuilder buyerName = new StringBuilder(args[2]);
 		for (int i = 3; i < args.length; i++)
-			buyerName += " " + args[i];
+			buyerName.append(" ").append(args[i]);
 
 		Player buyer = null;
 		for (Player player : instance.getServer().getOnlinePlayers()) {
-			if (player.getName().equalsIgnoreCase(buyerName)) {
+			if (player.getName().equalsIgnoreCase(buyerName.toString())) {
 				buyer = player;
 				break;
 			}
@@ -875,19 +856,14 @@ public class HorseRPG extends JavaPlugin {
 			return;
 		Player p = (Player) sender;
 
-		/**
-		 * if (pCurrentHorse.containsKey(p)) { msg(p, "&b" + pCurrentHorse.get(p).name +
-		 * "&a is already summoned."); return; }
-		 */
-
-		RPGHorse h = null;// getHorseNotSpawned(p, args, 1);
+		RPGHorse h;
 		if (!hasHorses(p)) {
 			h = null;
 			if (freeHorse) {
 				msg(p, "&aHere's one for free...");
 				h = new RPGHorse(p);
 				if (!ownedHorses.containsKey(p.getName()))
-					ownedHorses.put(p.getName(), new TreeSet<RPGHorse>());
+					ownedHorses.put(p.getName(), new TreeSet<>());
 				ownedHorses.get(p.getName()).add(h);
 				horses.add(h);
 			} else {
@@ -913,7 +889,7 @@ public class HorseRPG extends JavaPlugin {
 				HorseRPG.msg(p, NEED_TIME_TO_RECHARGE.replaceAll("%name%", h.name));
 			} else {
 				if (useEconomy && summonCost > 0) {
-					boolean b = false;
+					boolean b;
 					try {
 						b = econ.withdrawPlayer(p, summonCost).transactionSuccess();
 					} catch (Exception e) {
@@ -945,7 +921,7 @@ public class HorseRPG extends JavaPlugin {
 			if (notAllowed(sender, H_BANISH, true))
 				return;
 		}
-		Player p = null;
+		Player p;
 		if (forced) {
 			if (args.length < 2)
 				return;
@@ -1009,7 +985,7 @@ public class HorseRPG extends JavaPlugin {
 		}
 		if (!forced)
 			if (useEconomy && banishCost > 0) {
-				boolean b = false;
+				boolean b;
 				try {
 					b = econ.withdrawPlayer(p, banishCost).transactionSuccess();
 				} catch (Exception e) {
@@ -1081,7 +1057,7 @@ public class HorseRPG extends JavaPlugin {
 		if (h == null)
 			return;
 
-		int xp = 0;
+		int xp;
 		try {
 			xp = Integer.parseInt(args[2]);
 		} catch (NumberFormatException ex) {
@@ -1155,11 +1131,11 @@ public class HorseRPG extends JavaPlugin {
 		if (args[2].equalsIgnoreCase("random"))
 			h.setName(RPGHorse.randomName(p));
 		else {
-			String hName = args[2];
+			StringBuilder hName = new StringBuilder(args[2]);
 			for (int i = 3; i < args.length; i++)
-				hName += " " + args[i];
-			hName = hName.replaceAll("_", " ");
-			h.setName(hName);
+				hName.append(" ").append(args[i]);
+			hName = new StringBuilder(hName.toString().replaceAll("_", " "));
+			h.setName(hName.toString());
 		}
 		// "&aHorse %oldname% has been changed to %newname%"
 		msg(p, RenameHorse.replace("%oldname%", oldname).replace("%newname%", h.name));
@@ -1268,7 +1244,7 @@ public class HorseRPG extends JavaPlugin {
 				StringBuilder sb = new StringBuilder();
 				sb.append("Valid colors: ");
 				for (Color c : Color.values()) {
-					sb.append(c.toString() + ", ");
+					sb.append(c.toString()).append(", ");
 				}
 				msg(p, sb.toString());
 			}
@@ -1306,7 +1282,7 @@ public class HorseRPG extends JavaPlugin {
 				StringBuilder sb = new StringBuilder();
 				sb.append("Valid styles: ");
 				for (Style c : Style.values()) {
-					sb.append(c.toString() + ", ");
+					sb.append(c.toString()).append(", ");
 				}
 				msg(p, sb.toString());
 			}
@@ -1383,7 +1359,7 @@ public class HorseRPG extends JavaPlugin {
 		String name = p.getName();
 
 		if (!ownedHorses.containsKey(name))
-			ownedHorses.put(name, new TreeSet<RPGHorse>());
+			ownedHorses.put(name, new TreeSet<>());
 		if (maxHorses(p) != -1 && ownedHorses.get(p.getName()).size() >= maxHorses(p)) {
 			msg(p, MAX_HORSES);
 			return;
@@ -1394,10 +1370,10 @@ public class HorseRPG extends JavaPlugin {
 		horses.add(h);
 
 		if (args.length >= 2 + offset) {
-			String hName = args[1];
+			StringBuilder hName = new StringBuilder(args[1]);
 			for (int i = 2 + offset; i < args.length; i++)
-				hName += " " + args[i];
-			h.setName(hName);
+				hName.append(" ").append(args[i]);
+			h.setName(hName.toString());
 		}
 		if (!pCurrentHorse.containsKey(p.getUniqueId())) {
 			h.summon(p);
@@ -1454,7 +1430,7 @@ public class HorseRPG extends JavaPlugin {
 						try {
 							h_config.saveHorse(h, false);
 						} catch (Error | Exception ed4) {
-							ed4.printStackTrace();
+							Bukkit.getLogger().severe(ed4.getMessage());
 						}
 					}
 				}
@@ -1492,7 +1468,7 @@ public class HorseRPG extends JavaPlugin {
 									statement.setInt(13, (int) h.generic_jump);
 									statement.addBatch();
 								} catch (Error | Exception ed4) {
-									ed4.printStackTrace();
+									Bukkit.getLogger().severe(ed4.getMessage());
 								}
 						}
 						statement.executeBatch();
@@ -1500,19 +1476,7 @@ public class HorseRPG extends JavaPlugin {
 
 					if (!connect.getAutoCommit()) {
 						connect.commit();
-					}/*
-				for (TreeSet<RPGHorse> horseSet : ownedHorses.values()) {
-					for (RPGHorse h : horseSet)
-						try {
-							statement.executeUpdate("insert into horses values('" + h.name + "', '" + h.owners_name
-									+ "', '" + h.color + "', '" + h.style + "', '" + h.variant + "', "
-									+ (h.godmode ? 1 : 0) + ", " + h.swiftness.xp + ", " + h.agility.xp + ", "
-									+ h.vitality.xp + ", " + h.wrath.xp + ", " + (h.isMale ? 0 : 1) + ", "
-									+ h.generic_speed + ", " + h.generic_jump + ")");
-						} catch (Error | Exception ed4) {
-							ed4.printStackTrace();
-						}
-				}*/
+					}
 				}
 			}
 
@@ -1522,10 +1486,10 @@ public class HorseRPG extends JavaPlugin {
 				if (logWhenSave)
 					msg(Bukkit.getConsoleSender(), HORSES_SAVED);
 		} catch (Exception e) {
-			System.err.println(e);
+			Bukkit.getLogger().severe(e.getMessage());
 			msg(sender,
-					"&a A problem has occured. Report the error message in the console to Zombie_Striker on spigot:");
-			sender.sendMessage("https://www.spigotmc.org/resources/mcmmohorses.46301/");
+					"&aA problem has occured. Report the error message in the console to Baktus_79 on Github:");
+			sender.sendMessage("https://github.com/Baktus79/mcMMOHorses-Reborn");
 		}
 	}
 
@@ -1544,7 +1508,7 @@ public class HorseRPG extends JavaPlugin {
 			return;
 		}
 
-		NavigableMap<RPGHorse, Integer> map = new TreeMap<RPGHorse, Integer>(Collections.reverseOrder());
+		NavigableMap<RPGHorse, Integer> map = new TreeMap<>(Collections.reverseOrder());
 		for (TreeSet<RPGHorse> hor : ownedHorses.values()) {
 			for (RPGHorse h : hor) {
 				map.put(h, Integer.MAX_VALUE - h.agility.xp - h.wrath.xp - h.vitality.xp - h.swiftness.xp);
@@ -1633,7 +1597,7 @@ public class HorseRPG extends JavaPlugin {
 		String name = p.getName();
 
 		if (!ownedHorses.containsKey(name))
-			ownedHorses.put(name, new TreeSet<RPGHorse>());
+			ownedHorses.put(name, new TreeSet<>());
 		if (maxHorses(p) != -1 && ownedHorses.get(p.getName()).size() >= maxHorses(p)) {
 			msg(p, MAX_HORSES);
 			return;
@@ -1724,23 +1688,14 @@ public class HorseRPG extends JavaPlugin {
 			if (forceClaimOnTaim)
 				pm.registerEvents(new TameToClaimListener(), this);
 		} catch (Error | Exception e5) {
-			e5.printStackTrace();
+			Bukkit.getLogger().severe(e5.getMessage());
 		}
 		try {
 			if (forcePermToRideUnclaimed)
 				pm.registerEvents(new PermToRideListener(), this);
 		} catch (Error | Exception e5) {
-			e5.printStackTrace();
+			Bukkit.getLogger().severe(e5.getMessage());
 		}
-
-		if (!getConfig().contains("auto-update")) {
-			getConfig().set("auto-update", true);
-			saveConfig();
-		}
-
-		// new Updater(instance, 61609, getConfig().getBoolean("auto-update"));
-		if (getConfig().getBoolean("auto-update"))
-			GithubUpdater.autoUpdate(this, "ZombieStriker", "mcMMOHorses", "mcMMOHorses.jar");
 
 		// Download the API dependancy
 		if (Bukkit.getPluginManager().getPlugin("PluginConstructorAPI") == null) {
@@ -1749,15 +1704,6 @@ public class HorseRPG extends JavaPlugin {
 					new File(getDataFolder().getParentFile(), "PluginConstructorAPI.jar"), "ZombieStriker",
 					"PluginConstructorAPI", "PluginConstructorAPI.jar");
 		}
-
-		Metrics metrics = new Metrics(this);
-		// Optional: Add custom charts
-		metrics.addCustomChart(new Metrics.SimplePie("horsecount", new java.util.concurrent.Callable<String>() {
-			@Override
-			public String call() throws Exception {
-				return horses.size() + "";
-			}
-		}));
 	}
 
 	/**
@@ -1785,11 +1731,11 @@ public class HorseRPG extends JavaPlugin {
 		if (!config.getConfig().contains("enable-economy"))
 			config.overwriteConfig();
 
-		offers = new HashMap<UUID, RPGHorse>();
-		ownedHorses = new HashMap<String, TreeSet<RPGHorse>>();
-		pCurrentHorse = new HashMap<UUID, RPGHorse>();
-		hSpawnedHorsesHashmap = new HashMap<Entity, RPGHorse>();
-		horses = new HashSet<RPGHorse>();
+		offers = new HashMap<>();
+		ownedHorses = new HashMap<>();
+		pCurrentHorse = new HashMap<>();
+		hSpawnedHorsesHashmap = new HashMap<>();
+		horses = new HashSet<>();
 	}
 
 	private void initMessages() {
@@ -1901,7 +1847,7 @@ public class HorseRPG extends JavaPlugin {
 			if (fc.contains("saddle-linked-horses"))
 				useSaddles = fc.getBoolean("saddle-linked-horses");
 
-			groups = new HashMap<String, Integer>();
+			groups = new HashMap<>();
 			Map<String, Object> groupsRaw = fc.getConfigurationSection("groups").getValues(false);
 			for (Entry<String, Object> entry : groupsRaw.entrySet())
 				groups.put("mcmmohorses.groups." + entry.getKey(), (int) entry.getValue());
@@ -1983,13 +1929,11 @@ public class HorseRPG extends JavaPlugin {
 			forceClaimOnTaim = fc.getBoolean("Force_claim_on_tame");
 			forcePermToRideUnclaimed = fc.getBoolean("RequirePermissionToRide");
 			for (Variant v : Variant.values()) {
-				costForHorse.put(v, fc.getDouble("priceForHorse." + v.name()));// (Double)
-				// h_config.getGlobalVariable(Keys.G_horseCost.toString()
-				// + "." + v.name()));
+				costForHorse.put(v, fc.getDouble("priceForHorse." + v.name())); // (Double)
 			}
 		} catch (Exception e) {
 			getLogger().info("Error loading 'config.yml' file!");
-			e.printStackTrace();
+			Bukkit.getLogger().severe(e.getMessage());
 		}
 	}
 
@@ -1997,8 +1941,8 @@ public class HorseRPG extends JavaPlugin {
 	 * Initializes help messages
 	 */
 	private void initHelp() {
-		help = new LinkedHashMap<String, String>();
-		setHelp = new LinkedHashMap<String, String>();
+		help = new LinkedHashMap<>();
+		setHelp = new LinkedHashMap<>();
 
 		help.put(H_HELP, "&b/h help &7[page] &a- Displays horse commands.");
 		help.put(H_ME, "&b/h me &a- Displays your info.");
@@ -2013,8 +1957,6 @@ public class HorseRPG extends JavaPlugin {
 			help.put(H_SHOP, "&b/h shop &a- Opens the shop GUI to buy horses.");
 		}
 
-		// fhelp.put(H_GIFT, "&b/h gift &7[name] [reciever] &a- Gifts a horse to another
-		// player.");
 		help.put(H_CREATE, "&b/h create &7[name] &a- Breeds a horse.");
 		help.put(H_ADDXP, "&b/h addxp &e<skill> <xp> &7[name] &a- Adds xp to horse.");
 		help.put(H_DELXP, "&b/h delxp &e<skill> <xp> &7[name] &a- Removes xp from horse.");
@@ -2028,8 +1970,8 @@ public class HorseRPG extends JavaPlugin {
 		setHelp.put(H_SET_NAME, "&b/h set name &a<name|random>");
 		setHelp.put(H_SET_COLOR, "&b/h set color &a<color|random>");
 		setHelp.put(H_SET_STYLE, "&b/h set style &a<style|random>");
-		setHelp.put(H_SET_STYLE, "&b/h set speed &a<<0.1 - 0.3>|random>");
-		setHelp.put(H_SET_STYLE, "&b/h set jump &a<<0.7>|random>");
+		setHelp.put(H_SET_SPEED, "&b/h set speed &a<<0.1 - 0.3>|random>");
+		setHelp.put(H_SET_JUMP, "&b/h set jump &a<<0.7>|random>");
 		setHelp.put(H_SET_TYPE, "&b/h set type &a<donkey|horse|mule|skele|zombie|rand>");
 
 	}
@@ -2047,7 +1989,7 @@ public class HorseRPG extends JavaPlugin {
 						if (owner == null || h == null || horses == null)
 							continue;
 						if (!ownedHorses.containsKey(owner))
-							ownedHorses.put(owner, new TreeSet<RPGHorse>());
+							ownedHorses.put(owner, new TreeSet<>());
 						ownedHorses.get(owner).add(h);
 						horses.add(h);
 						amount++;
@@ -2087,7 +2029,7 @@ public class HorseRPG extends JavaPlugin {
 							rs.getInt("vitalityXP"), rs.getInt("wrathXP"), null, jump, speed, rs.getInt("sex") == 0);
 
 					if (!ownedHorses.containsKey(owner))
-						ownedHorses.put(owner, new TreeSet<RPGHorse>());
+						ownedHorses.put(owner, new TreeSet<>());
 
 					ownedHorses.get(owner).add(h);
 					horses.add(h);
@@ -2191,12 +2133,6 @@ public class HorseRPG extends JavaPlugin {
 			showHelp(sender, args);
 			return true;
 		}
-		if (sender instanceof Player) {
-			Player player = (Player) sender;
-			if (player.getVehicle() != null && isRPGHorse(player.getVehicle())) {
-
-			}
-		}
 
 		String hCmd = args[0].toLowerCase();
 		String subcmd = "";
@@ -2204,119 +2140,42 @@ public class HorseRPG extends JavaPlugin {
 			subcmd = args[1].toLowerCase();
 
 		switch (hCmd) {
-			case "help":
-				showHelp(sender, args);
-				return true;
-			case "me":
-				showMe(sender);
-				return true;
-			case "info":
-			case "stats":
-			case "horse":
-				showHorse(sender, args);
-				return true;
-			case "shop":
-				shop.openInventory(sender);
-				return true;
-			case "swiftness":
-			case "agility":
-			case "vitality":
-			case "wrath":
-				showSkill(sender, hCmd, args);
-				return true;
-			case "claim":
-				claimHorse(sender);
-				return true;
-			case "buy":
-			case "accept":
-				buyHorse(sender, true);
-				return true;
-			case "deny":
-			case "decline":
-				buyHorse(sender, false);
-				return true;
-			case "sell":
-				sellHorse(sender, args);
-				return true;
-			case "leaderboard":
-				showLeaderBoard(sender, args);
-				return true;
-			case "spawn":
-			case "s":
-			case "summon":
-				summonHorse(sender, args);
-				return true;
-			case "b":
-			case "banish":
-			case "stable":
-				banishHorse(sender, args, false);
-				return true;
-			case "banishfor":
-				banishHorse(sender, args, true);
-				return true;
-			case "addxp":
-			case "delxp":
-				addHorseXP(sender, args);
-				return true;
-			case "lock":
-			case "protect":
-				protectHorse(sender, args, true);
-				return true;
-			case "unlock":
-			case "unprotect":
-				protectHorse(sender, args, false);
-				return true;
-			case "save":
-				saveHorses(sender);
-				return true;
-			case "gift":
-			case "create":
-				createHorse(sender, args, hCmd.equals("gift"));
-				return true;
-			case "allowbreeding":
-				allowBreeding(sender, args);
-				return true;
-			case "delete":
-			case "kill":
-			case "remove":
-				deleteHorse(sender, args);
-				return true;
-			case "set":
+			case "help" -> showHelp(sender, args);
+			case "me" -> showMe(sender);
+			case "info", "stats", "horse" -> showHorse(sender, args);
+			case "shop" -> shop.openInventory(sender);
+			case "swiftness", "agility", "vitality", "wrath" -> showSkill(sender, hCmd, args);
+			case "claim" -> claimHorse(sender);
+			case "buy", "accept" -> buyHorse(sender, true);
+			case "deny", "decline" -> buyHorse(sender, false);
+			case "sell" -> sellHorse(sender, args);
+			case "leaderboard" -> showLeaderBoard(sender, args);
+			case "spawn", "s", "summon" -> summonHorse(sender, args);
+			case "b", "banish", "stable" -> banishHorse(sender, args, false);
+			case "banishfor" -> banishHorse(sender, args, true);
+			case "addxp", "delxp" -> addHorseXP(sender, args);
+			case "lock", "protect" -> protectHorse(sender, args, true);
+			case "unlock", "unprotect" -> protectHorse(sender, args, false);
+			case "save" -> saveHorses(sender);
+			case "gift", "create" -> createHorse(sender, args, hCmd.equals("gift"));
+			case "allowbreeding" -> allowBreeding(sender, args);
+			case "delete", "kill", "remove" -> deleteHorse(sender, args);
+			case "set" -> {
 				switch (subcmd) {
-					case "name":
-						setHorseName(sender, args);
-						return true;
-					case "speed":
-						setHorseSpeed(sender, args);
-						return true;
-					case "jump":
-						setHorseJump(sender, args);
-						return true;
-					case "type":
-						setHorseVariant(sender, args);
-						return true;
-					case "color":
-						setHorseColor(sender, args);
-						return true;
-					case "style":
-						setHorseStyle(sender, args);
-						return true;
-					default:
-						showSetHelp(sender);
-						return true;
+					case "name" -> setHorseName(sender, args);
+					case "speed" -> setHorseSpeed(sender, args);
+					case "jump" -> setHorseJump(sender, args);
+					case "type" -> setHorseVariant(sender, args);
+					case "color" -> setHorseColor(sender, args);
+					case "style" -> setHorseStyle(sender, args);
+					default -> showSetHelp(sender);
 				}
-			case "db":
-			case "data":
-			case "database":
-				loadDatabase(sender);
-				return true;
-			case "reload":
-				reloadPlugin(sender);
-				return true;
-			default:
-				msg(sender, INVALID_COMMAND);
-				return true;
+			}
+			case "db", "data", "database" -> loadDatabase(sender);
+			case "reload" -> reloadPlugin(sender);
+			default -> msg(sender, INVALID_COMMAND);
 		}
+		return true;
 	}
 
 	@Override

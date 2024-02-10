@@ -15,22 +15,11 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.UUID;
-
+@SuppressWarnings("deprecation")
 public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onJoin(final PlayerJoinEvent event) {
-		// if(HorseRPG.banishonquit)
-		// return;
-
-		for (UUID p : HorseRPG.pCurrentHorse.keySet()) {
-			if (p.equals(event.getPlayer().getUniqueId())) {
-				// HorseRPG.pCurrentHorse.put(event.getPlayer(), HorseRPG.pCurrentHorse.get(p));
-				break;
-			}
-		}
-		// if (HorseRPG.banishonquit) {
 		if (HorseRPG.ownedHorses.containsKey(event.getPlayer().getName()))
 			new BukkitRunnable() {
 				public void run() {
@@ -58,7 +47,7 @@ public class PlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerMove(PlayerMoveEvent event) {
 		Player p = event.getPlayer();
-		boolean b = false;
+		boolean b;
 		try {
 			NewHorseUtil.useNewHorses();
 			b = p.getVehicle() instanceof AbstractHorse;
@@ -100,7 +89,7 @@ public class PlayerListener implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onPlayerFeedingHorse(PlayerInteractEntityEvent event) {
-		boolean b = false;
+		boolean b;
 		try {
 			NewHorseUtil.useNewHorses();
 			b = event.getRightClicked() instanceof AbstractHorse;
@@ -117,7 +106,7 @@ public class PlayerListener implements Listener {
 				} catch (Exception | Error e) {
 					item = p.getItemInHand();
 				}
-				Material m = null;
+				Material m;
 				if (item != null && ((m = item.getType()) == Material.GOLDEN_APPLE || m == Material.GOLDEN_CARROT)) {
 					RPGHorse h = HorseRPG.getHorse(horse);
 					if (h != null && h.owners_name.equalsIgnoreCase(p.getName())) {
@@ -168,7 +157,7 @@ public class PlayerListener implements Listener {
 									HorseRPG.msg(e.getPlayer(), HorseRPG.NEED_TIME_TO_RECHARGE.replaceAll("%name%", h.name));
 								} else {
 									if (HorseRPG.useEconomy && HorseRPG.summonCost > 0) {
-										boolean b = false;
+										boolean b;
 										try {
 											b = HorseRPG.econ.withdrawPlayer(e.getPlayer(), HorseRPG.summonCost).transactionSuccess();
 										} catch (Exception e5) {

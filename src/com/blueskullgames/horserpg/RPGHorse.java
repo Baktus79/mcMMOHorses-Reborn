@@ -16,9 +16,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.*;
-import org.bukkit.entity.Horse.Color;
-import org.bukkit.entity.Horse.Style;
-import org.bukkit.entity.Horse.Variant;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -27,16 +24,15 @@ import java.util.UUID;
 @SuppressWarnings("deprecation")
 public class RPGHorse implements Comparable<RPGHorse> {
 
-	public static String[] FIRST_NAMES = { "Big", "Boomer", "Bubba", "Bubble", "Candy", "Chicken", "Chubby", "Chunky",
+	public static String[] FIRST_NAMES = {"Big", "Boomer", "Bubba", "Bubble", "Candy", "Chicken", "Chubby", "Chunky",
 			"Cinnamon", "Daisy", "Fluffy", "Lil'", "Little", "Muffin", "Peachy", "Pooky", "Rainbow", "Sir", "Snuggle",
-			"Sprinkle", "Stinker", "Swag", "Tickle", "Tinkle", "Tootsie", "Twinkle"
+			"Sprinkle", "Stinker", "Swag", "Tickle", "Tinkle", "Tootsie", "Twinkle", "Gary", "Henry", "King",
+			"Foal Ball", "Apple", "Carrot", "Potato", "Sugar", "Butter", "Silver"};
 
-			, "Gary", "Henry", "King", "Foal Ball", "Apple", "Carrot", "Potato", "Sugar", "Butter", "Silver" };
-	public static String[] LAST_NAMES = { "Blossom", "Booty", "Bottoms", "Boy", "Bunches", "Buttercup", "Cucumber",
+	public static String[] LAST_NAMES = {"Blossom", "Booty", "Bottoms", "Boy", "Bunches", "Buttercup", "Cucumber",
 			"Cumquat", "Daddy", "Freckles", "Girl", "Horsey", "Hugs A Lot", "Marshmallow", "McFluffems", "McGiggles",
-			"McNuggs", "McShowoff", "McSnuggles", "Noodles", "Pancake", "Poops A Lot", "Potato"
-
-			, "McSwifty", "The Brave", "The Noble", "The First", "Johnson", "Grimes", "McSnuffles" };
+			"McNuggs", "McShowoff", "McSnuggles", "Noodles", "Pancake", "Poops A Lot", "Potato", "McSwifty",
+			"The Brave", "The Noble", "The First", "Johnson", "Grimes", "McSnuffles"};
 
 	public boolean godmode, isBanished, isDead;
 	public double distance;
@@ -56,9 +52,9 @@ public class RPGHorse implements Comparable<RPGHorse> {
 	private Entity horse;
 	public UUID holderOverUUID = null;
 
-	public Color color;
-	public Style style;
-	public Variant variant;
+	public Horse.Color color;
+	public Horse.Style style;
+	public Horse.Variant variant;
 
 	public boolean hasSaddle;
 
@@ -82,8 +78,6 @@ public class RPGHorse implements Comparable<RPGHorse> {
 	public static double minJump = 0.4;
 	public static double maxJump = 1.0;
 
-//	public boolean spawned = false;
-
 	public static double getRandomSpeed() {
 		return ((maxSpeed - minSpeed) * Math.random()) + minSpeed;
 	}
@@ -92,7 +86,8 @@ public class RPGHorse implements Comparable<RPGHorse> {
 		return ((maxJump - minJump) * Math.random()) + minJump;
 	}
 
-	public static BaseAtributeUtil attributeUtil = null;
+	public static BaseAtributeUtil attributeUtil;
+
 	static {
 		try {
 			attributeUtil = new AtributeUtilAbstractHorse();
@@ -101,29 +96,30 @@ public class RPGHorse implements Comparable<RPGHorse> {
 		}
 	}
 
-	public boolean initSaddleForClicks(){
-		if(!HorseRPG.useSaddles)
+	public boolean initSaddleForClicks() {
+		if (!HorseRPG.useSaddles)
 			return false;
 		ItemStack saddle = new ItemStack(Material.SADDLE);
 		ItemMeta im = saddle.getItemMeta();
-		im.setDisplayName(HorseRPG.SADDLE_NAME.replaceAll("%name%",name));
+		im.setDisplayName(HorseRPG.SADDLE_NAME.replaceAll("%name%", name));
 		saddle.setItemMeta(im);
 		try {
 			((AbstractHorse) horse).getInventory().setSaddle(saddle);
 		} catch (Exception | Error e) {
-			((Horse) horse).getInventory().setItem(0,saddle);
+			((Horse) horse).getInventory().setItem(0, saddle);
 		}
 		return true;
 	}
 
 	/**
 	 * Makes a unique random name
-	 * 
+	 *
 	 * @return a unique random name
 	 */
 	public static String randomName(Player p) {
-		String name = "Glitch";
-		top: while (true) {
+		String name;
+		top:
+		while (true) {
 			name = FIRST_NAMES[(int) (Math.random() * FIRST_NAMES.length)] + " "
 					+ LAST_NAMES[(int) (Math.random() * LAST_NAMES.length)];
 			if (!HorseRPG.ownedHorses.containsKey(p.getName()))
@@ -138,73 +134,68 @@ public class RPGHorse implements Comparable<RPGHorse> {
 
 	/**
 	 * Gets a random color
-	 * 
+	 *
 	 * @return a random color
 	 */
-	public static Color randomColor() {
-		return Color.values()[(int) (Math.random() * Color.values().length)];
+	public static Horse.Color randomColor() {
+		return Horse.Color.values()[(int) (Math.random() * Horse.Color.values().length)];
 	}
 
 	/**
 	 * Gets a random style
-	 * 
+	 *
 	 * @return a random style
 	 */
-	public static Style randomStyle() {
-		return Style.values()[(int) (Math.random() * Style.values().length)];
+	public static Horse.Style randomStyle() {
+		return Horse.Style.values()[(int) (Math.random() * Horse.Style.values().length)];
 	}
 
 	/**
 	 * Gets a random variant
-	 * 
+	 *
 	 * @return a random variant
 	 */
-	public static Variant randomVariant() {
-		return Variant.values()[(int) (Math.random() * Variant.values().length)];
+	public static Horse.Variant randomVariant() {
+		return Horse.Variant.values()[(int) (Math.random() * Horse.Variant.values().length)];
 	}
 
 	/**
 	 * Creates a new random horse
-	 * 
-	 * @param owner
-	 *            is the new horse owner
+	 *
+	 * @param owner is the new horse owner
 	 */
 	public RPGHorse(Player owner) {
-		this(randomName(owner), owner.getName(), randomColor(), randomStyle(), Variant.HORSE, false, 0, 0, 0, 0, null,
+		this(randomName(owner), owner.getName(), randomColor(), randomStyle(), Horse.Variant.HORSE, false, 0, 0, 0, 0, null,
 				getRandomJump(), getRandomSpeed(), Math.random() > 0.5);
 	}
 
 	/**
 	 * Makes a spawned horse an RPG Horse
-	 * 
-	 * @param owner
-	 *            is the owner of the horse
-	 * @param horse
-	 *            is the spawned horse
+	 *
+	 * @param owner is the owner of the horse
+	 * @param horse is the spawned horse
 	 */
 	public RPGHorse(Player owner, Horse horse) {
-		this((horse.getCustomName() != null && horse.getCustomName() != "" ? horse.getCustomName() : randomName(owner)),
-				owner.getName(), horse.getColor(), horse.getStyle(), Variant.HORSE, false, 0, 0, 0, 0, null,
+		this((horse.getCustomName() != null && !horse.getCustomName().isEmpty() ? horse.getCustomName() : randomName(owner)),
+				owner.getName(), horse.getColor(), horse.getStyle(), Horse.Variant.HORSE, false, 0, 0, 0, 0, null,
 				attributeUtil.getJumpHeight(horse), attributeUtil.getSpeed(horse), Math.random() > 0.5);
-		this.isBaby = !((Ageable) horse).isAdult();
-		this.babyAge = ((Ageable) horse).getAge();
+		this.isBaby = !horse.isAdult();
+		this.babyAge = horse.getAge();
 		this.holderOverUUID = horse.getUniqueId();
-	//	spawned = true;
+		//	spawned = true;
 	}
 
 	/**
 	 * Makes a spawned horse an RPG Horse
-	 * 
+	 * <p>
 	 * USE IF HORSE VAR IS NOT ACCEPTABLE
-	 * 
-	 * @param owner
-	 *            is the owner of the horse
-	 * @param horse
-	 *            is the spawned horse
+	 *
+	 * @param owner is the owner of the horse
+	 * @param horse is the spawned horse
 	 */
 	public RPGHorse(Player owner, Entity horse) {
-		this((horse.getCustomName() != null && horse.getCustomName() != "" ? horse.getCustomName() : randomName(owner)),
-				owner.getName(), Color.BROWN, Style.NONE, Variant.HORSE, false, 0, 0, 0, 0, null,
+		this((horse.getCustomName() != null && !horse.getCustomName().isEmpty() ? horse.getCustomName() : randomName(owner)),
+				owner.getName(), Horse.Color.BROWN, Horse.Style.NONE, Horse.Variant.HORSE, false, 0, 0, 0, 0, null,
 				attributeUtil.getJumpHeight(horse), attributeUtil.getSpeed(horse), Math.random() > 0.5);
 		this.isBaby = !((Ageable) horse).isAdult();
 		this.babyAge = ((Ageable) horse).getAge();
@@ -214,31 +205,21 @@ public class RPGHorse implements Comparable<RPGHorse> {
 
 	/**
 	 * Creates an RPG horse
-	 * 
-	 * @param name
-	 *            is the name of the horse
-	 * @param owner
-	 *            is the player owner of the horse
-	 * @param color
-	 *            is the color of the horse
-	 * @param style
-	 *            is the style of the horse
-	 * @param variant
-	 *            is the variant of the horse
-	 * @param godmode
-	 *            sets whether horse is invisible or not
-	 * @param swiftnessXP
-	 *            is the swiftnessXP
-	 * @param agilityXP
-	 *            is the agilityXP
-	 * @param vitalityXP
-	 *            is the vitalityXP
-	 * @param wrathXP
-	 *            is the wrathXP
+	 *
+	 * @param name        is the name of the horse
+	 * @param owner       is the player owner of the horse
+	 * @param color       is the color of the horse
+	 * @param style       is the style of the horse
+	 * @param variant     is the variant of the horse
+	 * @param godmode     sets whether horse is invisible or not
+	 * @param swiftnessXP is the swiftnessXP
+	 * @param agilityXP   is the agilityXP
+	 * @param vitalityXP  is the vitalityXP
+	 * @param wrathXP     is the wrathXP
 	 */
-	public RPGHorse(String name, String owner, Color color, Style style, Variant variant, boolean godmode,
-			int swiftnessXP, int agilityXP, int vitalityXP, int wrathXP, UUID id, double jumpPow, double sprintPow,
-			boolean isMale) {
+	public RPGHorse(String name, String owner, Horse.Color color, Horse.Style style, Horse.Variant variant, boolean godmode,
+					int swiftnessXP, int agilityXP, int vitalityXP, int wrathXP, UUID id, double jumpPow, double sprintPow,
+					boolean isMale) {
 
 		setName(name);
 		this.owners_name = owner;
@@ -267,23 +248,22 @@ public class RPGHorse implements Comparable<RPGHorse> {
 		}
 		this.generic_jump = jumpPow;
 		this.generic_speed = sprintPow;
-		if(getHorse()!=null)
+		if (getHorse() != null)
 			initSaddleForClicks();
 	}
 
 	/**
 	 * Sets a new name for the horse
-	 * 
-	 * @param newName
-	 *            is the new name
+	 *
+	 * @param newName is the new name
 	 */
 	public void setName(String newName) {
 		int add = 0;
-		String testName = newName.replaceAll("\u00a7", "&");
-		if (newName.length() == 0)
+		String testName = newName.replaceAll("§", "&");
+		if (newName.isEmpty())
 			return;
 		if (HorseRPG.ownedHorses.containsKey(owners_name))
-			whileloop: while (true) {
+			whileloop:while (true) {
 				for (RPGHorse h : HorseRPG.ownedHorses.get(owners_name)) {
 					if (h.name.equals(testName) && h != this) {
 						add++;
@@ -300,11 +280,10 @@ public class RPGHorse implements Comparable<RPGHorse> {
 
 	/**
 	 * Sets a new color for the horse
-	 * 
-	 * @param newColor
-	 *            is the new color
+	 *
+	 * @param newColor is the new color
 	 */
-	public void setColor(Color newColor) {
+	public void setColor(Horse.Color newColor) {
 		color = newColor;
 		if (horse != null)
 			try {
@@ -325,11 +304,10 @@ public class RPGHorse implements Comparable<RPGHorse> {
 
 	/**
 	 * Sets a new style for the horse
-	 * 
-	 * @param newStyle
-	 *            is the new style
+	 *
+	 * @param newStyle is the new style
 	 */
-	public void setStyle(Style newStyle) {
+	public void setStyle(Horse.Style newStyle) {
 		style = newStyle;
 		if (horse != null)
 			try {
@@ -364,11 +342,10 @@ public class RPGHorse implements Comparable<RPGHorse> {
 
 	/**
 	 * Sets a new variant for the horse
-	 * 
-	 * @param newVariant
-	 *            is the new variant
+	 *
+	 * @param newVariant is the new variant
 	 */
-	public void setVariant(Variant newVariant) {
+	public void setVariant(Horse.Variant newVariant) {
 		variant = newVariant;
 		if (horse != null) {
 			if (ReflectionUtil.isVersionHigherThan(1, 10)) {
@@ -379,7 +356,7 @@ public class RPGHorse implements Comparable<RPGHorse> {
 						summon(Bukkit.getPlayer(this.owners_name));
 					}
 					return;
-				} catch (Exception e) {
+				} catch (Exception ignored) {
 				}
 			}
 			Entity temp = horse;
@@ -416,9 +393,8 @@ public class RPGHorse implements Comparable<RPGHorse> {
 
 	/**
 	 * Adds distance to the horse's odometer
-	 * 
-	 * @param dist
-	 *            is the amount of distance to add
+	 *
+	 * @param dist is the amount of distance to add
 	 */
 	public void travel(double dist) {
 		distance += dist;
@@ -434,9 +410,8 @@ public class RPGHorse implements Comparable<RPGHorse> {
 
 	/**
 	 * Summons a player's horse
-	 * 
-	 * @param p
-	 *            is the horse owner
+	 *
+	 * @param p is the horse owner
 	 */
 	public Entity summon(Player p) {
 		return summon(p, p.getLocation());
@@ -444,9 +419,8 @@ public class RPGHorse implements Comparable<RPGHorse> {
 
 	/**
 	 * Summons a player's horse
-	 * 
-	 * @param p
-	 *            is the horse owner
+	 *
+	 * @param p is the horse owner
 	 */
 	public Entity summon(Player p, Location loc) {
 		try {
@@ -472,7 +446,7 @@ public class RPGHorse implements Comparable<RPGHorse> {
 					((org.bukkit.entity.Mule) horse).setCarryingChest(true);
 				}
 			}
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 
 		if (!isBaby) {
@@ -490,9 +464,9 @@ public class RPGHorse implements Comparable<RPGHorse> {
 		horse.setCustomName(ChatColor.translateAlternateColorCodes('&', name));
 		if (inventory == null) {
 			inventory = new ItemStack[hasChest ? 16 : 1];
-			if(HorseRPG.useSaddles){
+			if (HorseRPG.useSaddles) {
 				initSaddleForClicks();
-			}else {
+			} else {
 				if (hasSaddle)
 					inventory[0] = new ItemStack(Material.SADDLE);
 			}
@@ -503,13 +477,9 @@ public class RPGHorse implements Comparable<RPGHorse> {
 			((org.bukkit.entity.ChestedHorse) horse).getInventory().setContents(inventory);
 		} else {
 			try {
-				// ((HorseInventory) ((AbstractHorse) horse).getInventory())
-				// .setSaddle(new ItemStack(Material.SADDLE));
 				((AbstractHorse) horse).getInventory().setContents(inventory);
 			} catch (Exception | Error e) {
 				try {
-					// ((HorseInventory) ((Horse) horse).getInventory())
-					// .setSaddle(new ItemStack(Material.SADDLE));
 					((Horse) horse).getInventory().setContents(inventory);
 				} catch (Exception | Error e2) {
 					if (p != null) {
@@ -518,8 +488,9 @@ public class RPGHorse implements Comparable<RPGHorse> {
 						HorseRPG.msg(p,
 								"The contents of the horse's inventory has been given to you (or dropped on the floor if your inventory is full)");
 					}
-					e.printStackTrace();
-					e2.printStackTrace();
+					Bukkit.getLogger().severe(e.getMessage());
+					Bukkit.getLogger().severe(e2.getMessage());
+
 					for (ItemStack is : inventory) {
 						if (is != null) {
 							if (p == null || p.getInventory().firstEmpty() == -1) {
@@ -586,7 +557,7 @@ public class RPGHorse implements Comparable<RPGHorse> {
 				if (horse instanceof org.bukkit.entity.Mule) {
 					setHasChest(((org.bukkit.entity.Mule) horse).isCarryingChest());
 				}
-			} catch (Exception e) {
+			} catch (Exception ignored) {
 			}
 
 			isBaby = !((Ageable) horse).isAdult();

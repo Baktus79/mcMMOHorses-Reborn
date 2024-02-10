@@ -1,20 +1,24 @@
 package com.blueskullgames.horserpg.utils;
 
-import java.io.*;
-import java.net.*;
-
-import com.google.gson.*;
-import org.bukkit.*;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
+
+@SuppressWarnings("deprecation")
 public class GithubDependDownloader {
 
 	public static boolean autoUpdate(final Plugin main, final File output, String author, String githubProject,
 			String jarname) {
 		try {
 
-			String tagname = null;
+			String tagname;
 			URL api = new URL("https://api.github.com/repos/" + author + "/" + githubProject + "/releases/latest");
 			URLConnection con = api.openConnection();
 			con.setConnectTimeout(15000);
@@ -36,19 +40,10 @@ public class GithubDependDownloader {
 					try {
 
 						InputStream in = download.openStream();
+						output.setWritable(true, false);
+						output.delete();
 
-						File pluginFile = output;
-
-						// File temp = new File("plugins/update");
-						// if (!temp.exists()) {
-						// temp.mkdir();
-						// }
-
-						// Path path = new File("plugins/update" + File.separator + "COD.jar").toPath();
-						pluginFile.setWritable(true, false);
-						pluginFile.delete();
-						// Files.copy(in, pluginFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-						copy(in, new FileOutputStream(pluginFile));
+						copy(in, new FileOutputStream(output));
 
 						new BukkitRunnable() {
 							public void run() {
@@ -56,13 +51,13 @@ public class GithubDependDownloader {
 							}
 						}.runTaskLater(main, 4);
 					} catch (IOException e) {
-						e.printStackTrace();
+						Bukkit.getLogger().severe(e.getMessage());
 					}
 				}
 			}.runTaskLaterAsynchronously(main, 0);
 			return true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			Bukkit.getLogger().severe(e.getMessage());
 		}
 		return false;
 	}
@@ -76,7 +71,6 @@ public class GithubDependDownloader {
 				break;
 			out.write(buf, 0, r);
 			bytes += r;
-			// debug("Another 4K, current: " + r);
 		}
 		out.flush();
 		out.close();
