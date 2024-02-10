@@ -38,7 +38,6 @@ import java.sql.*;
 import java.util.*;
 import java.util.Map.Entry;
 
-@SuppressWarnings("deprecation")
 public class HorseRPG extends JavaPlugin {
 
 	public static final String H_HELP = "mcmmohorses.help";
@@ -435,13 +434,13 @@ public class HorseRPG extends JavaPlugin {
 			int showedHorses = Math.min(ownedHor, 10);
 			try {
 				obj.getScore(Bukkit.getOfflinePlayer(ChatColor.translateAlternateColorCodes('&',
-						sb_owned + myHorses.size() + " / " + (maxHorses(p) == -1 ? sb_Unlimited : maxHorses(p)))))
+								sb_owned + myHorses.size() + " / " + (maxHorses(p) == -1 ? sb_Unlimited : maxHorses(p)))))
 						.setScore(showedHorses + 2);
 				obj.getScore(Bukkit.getOfflinePlayer(ChatColor.translateAlternateColorCodes('&', "&aHorses:")))
 						.setScore(showedHorses + 1);
 				for (int i = 0; i < showedHorses; i++) {
 					obj.getScore(Bukkit.getOfflinePlayer(
-							ChatColor.translateAlternateColorCodes('&', ((RPGHorse) myHorses.toArray()[i]).name)))
+									ChatColor.translateAlternateColorCodes('&', ((RPGHorse) myHorses.toArray()[i]).name)))
 							.setScore(i);
 				}
 				if (showedHorses < ownedHor)
@@ -449,10 +448,10 @@ public class HorseRPG extends JavaPlugin {
 							sb_PlusAmountMore.replaceAll("%amount%", "" + (ownedHor - showedHorses))))).setScore(-1);
 			} catch (Error | Exception e54) {
 				obj.getScore(ChatColor.translateAlternateColorCodes('&',
-						sb_owned + myHorses.size() + " / " + (maxHorses(p) == -1 ? sb_Unlimited : maxHorses(p))))
+								sb_owned + myHorses.size() + " / " + (maxHorses(p) == -1 ? sb_Unlimited : maxHorses(p))))
 						.setScore(showedHorses + 3);
 				obj.getScore(ChatColor.translateAlternateColorCodes('&',
-						sb_owned + (maxHorses(p) == -1 ? sb_Unlimited : maxHorses(p))))
+								sb_owned + (maxHorses(p) == -1 ? sb_Unlimited : maxHorses(p))))
 						.setScore(showedHorses + 2);
 				obj.getScore((ChatColor.translateAlternateColorCodes('&', "&aHorses:"))).setScore(showedHorses + 1);
 				for (int i = 0; i < showedHorses; i++) {
@@ -1815,8 +1814,8 @@ public class HorseRPG extends JavaPlugin {
 		PAGE_DOES_NOT_EXIST = messages.a("Page_does_not_exist", PAGE_DOES_NOT_EXIST);
 		PLAYER_ONLY = messages.a("Player_only", PLAYER_ONLY);
 
-		SADDLE_NAME = messages.a("Saddle_click_to_banish",SADDLE_NAME);
-		SADDLE_SUMMON = messages.a("Saddle_Summon_Item_Name",SADDLE_SUMMON);
+		SADDLE_NAME = messages.a("Saddle_click_to_banish", SADDLE_NAME);
+		SADDLE_SUMMON = messages.a("Saddle_Summon_Item_Name", SADDLE_SUMMON);
 
 		FOALBREED = messages.a("Breed_New_Foal", FOALBREED);
 
@@ -1896,10 +1895,10 @@ public class HorseRPG extends JavaPlugin {
 			sprintCooldown = fc.getInt("sprint-cooldown");
 			infuriateCooldown = fc.getInt("infuriate-cooldown");
 
-			if(fc.contains("invincible-freeroaming-horses"))
+			if (fc.contains("invincible-freeroaming-horses"))
 				invinciblefreerangehorses = fc.getBoolean("invincible-freeroaming-horses");
 
-			if(fc.contains("saddle-linked-horses"))
+			if (fc.contains("saddle-linked-horses"))
 				useSaddles = fc.getBoolean("saddle-linked-horses");
 
 			groups = new HashMap<String, Integer>();
