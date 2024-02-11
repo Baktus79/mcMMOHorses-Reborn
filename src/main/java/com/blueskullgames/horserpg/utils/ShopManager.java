@@ -33,7 +33,7 @@ public class ShopManager implements Listener {
 	public ShopManager() {
 		shop = Bukkit.createInventory(null, ((((Variant.values().length + Color.values().length) / 9) + 1) * 9), title);
 		for (Variant v : Variant.values()) {
-			if (v.name().equals("LLAMA"))
+			if (v == Variant.LLAMA || v == Variant.CAMEL)
 				continue;
 			if (v == Variant.HORSE)
 				for (Color c : Color.values())

@@ -1,6 +1,6 @@
 ######################################################
 #                                                    #
-#              mcMMO Horses Config ${project.version}            #
+#          mcMMO Horses Config ${version}            #
 #                                                    #
 ######################################################
 
@@ -87,7 +87,6 @@ priceForHorse:
   MULE: 100.0
   UNDEAD_HORSE: 400.0
   SKELETON_HORSE: 400.0
-  LLAMA: 100.0
 
 # Requires the horse to be claimed when they are tamed, or else the player is ejected from the horse
 Force_claim_on_tame: false
