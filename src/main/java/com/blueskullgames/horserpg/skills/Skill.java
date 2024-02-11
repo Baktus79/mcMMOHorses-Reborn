@@ -2,7 +2,8 @@ package com.blueskullgames.horserpg.skills;
 
 import com.blueskullgames.horserpg.HorseRPG;
 import com.blueskullgames.horserpg.RPGHorse;
-import com.blueskullgames.horserpg.utils.HotbarMessager;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -58,11 +59,7 @@ public abstract class Skill {
 			if (p != null) {
 				String inc = HorseRPG.SKILL_INCREASED_BY.replaceAll("%name%", name).replaceAll("%difference%",difference+"").replaceAll("%level%", level+"");
 				HorseRPG.msg(p, inc);
-				try {
-					HotbarMessager.sendHotBarMessage(p, ChatColor.translateAlternateColorCodes('&', inc));
-				}catch(Error|Exception ignored) {
-					
-				}
+				p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacy(ChatColor.translateAlternateColorCodes('&', inc)));
 			}
 			//"&e" + name + " skill increased by " + difference + ". Total (" + level + ")" 
 			h.powerLevel += difference;
